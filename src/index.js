@@ -1,65 +1,44 @@
 var fs = require('fs');
 var Pdf = require('html-pdf');
 var Handlebars = require('handlebars');
-var Hapi = require('hapi');
-var Joi = require('joi');
-
-var server = new Hapi.Server();
-server.connection({ port: 3000 });
+var express = require('express');
+var server = express();
 
 var genCount = 0;
 
 function makeReply(reply){
   return function(err, stream){
-    reply(stream).type('application/pdf');
+    //console.log(JSON.stringify(reply));
+    reply.setHeader('Content-Type', 'application/pdf');
+    stream.pipe(reply);
   }
 }
 
-server.route({
-    method: 'POST',
-    path: '/generate',
-    config: {
-      /*validate: {
-        payload: Joi.object({
-            template: Joi.string().required()
-            //items: Joi.array().required()
-          }).without('password', 'accessToken')
-      }*/
+server.get('/generate', function (req, res) {
 
-    },
-
-    handler: function (request, reply) {
-      console.log("payload: "+request.payload);
-      console.log("generate pdf");
-      console.log('template: '+request.payload.template);
-      console.log('items: '+request.payload.data.items);
-  
-      queueJob(request.payload.template, request.payload.data, makeReply(reply));
-    }
-});
-
-
-
-server.register(require('inert'), function (err) {
-    if (err) {
-        throw err;
-    }
-
-    server.route({
-        method: 'GET',
-        path: '/{param*}',
-        handler: {
-          directory: {
-            path: 'public',
-            index: true
-          }
+    var template = req.query.template;
+    if (typeof template == "undefined") template = "coupon-master-template.html";
+    var codes = req.query.codes.split(",");
+    var request = {
+        payload : {
+            template : template,
+            data : {
+                items : []
+            }
         }
-      });
+    };
+    for (var i=0; i<codes.length; i++) {
+        var code = codes[i];
+        request.payload.data.items.push({code:code});
+    }
+    console.log("payload: "+JSON.stringify(request.payload));
+    console.log("generate pdf");
+    console.log('template: '+JSON.stringify(request.payload.template));
+    console.log('data.items: '+JSON.stringify(request.payload.data.items));
+    queueJob(request.payload.template, request.payload.data, makeReply(res));
 });
-
-server.start(function () {
-    console.log('Server running at:', server.info.uri);
-});
+server.listen(2342);
+console.log('Running on port 2342 - for testing call: http://localhost:2342/generate?codes=1,2,3');
 
 var MAX_WORKERS = 4;//max pdfs creation triggers at a time
 

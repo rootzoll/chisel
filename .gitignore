@@ -24,3 +24,4 @@ jferris-*.gemspec
 .~lock*
 bin
 public/system
+.idea
