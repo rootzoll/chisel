@@ -16,26 +16,38 @@ function makeReply(reply){
 
 server.get('/generate', function (req, res) {
 
-    var template = req.query.template;
-    if (typeof template == "undefined") template = "coupon-master-template.html";
-    var codes = req.query.codes.split(",");
     var request = {
         payload : {
-            template : template,
+            template : "coupon-master-template.html",
             data : {
                 items : []
             }
         }
     };
-    for (var i=0; i<codes.length; i++) {
-        var code = codes[i];
-        request.payload.data.items.push({code:code});
+
+    // if now template set - use default template
+    if ((typeof req.query.template!="undefined") && (req.query.template!="undefined")) request.payload.template = req.query.template;
+
+    // for code coupon printing
+    if (typeof req.query.codes != "undefined") {
+        var codes = req.query.codes.split(",");
+        for (var i=0; i<codes.length; i++) {
+            var code = codes[i];
+            request.payload.data.items.push({code:code});
+        }
+    } else
+
+    // for general PDF generation (item array per parameter)
+    if (typeof req.query.items != "undefined") {
+        request.payload.data.items = JSON.parse(req.query.items);
     }
+
+    console.log("****** GENERATE PDF *********");
     console.log("payload: "+JSON.stringify(request.payload));
-    console.log("generate pdf");
     console.log('template: '+JSON.stringify(request.payload.template));
     console.log('data.items: '+JSON.stringify(request.payload.data.items));
     queueJob(request.payload.template, request.payload.data, makeReply(res));
+
 });
 server.listen(2342);
 console.log('Running on port 2342 - for testing call: http://localhost:2342/generate?codes=1,2,3');
@@ -101,6 +113,13 @@ function processQueue(){
 }
 
 function compileTemplate(templateName){
-  var file = fs.readFileSync('templates/'+templateName, {encoding: 'utf8'});
+
+  var file;
+  if (templateName.indexOf("http")==0) {
+    file = fs.readFileSync(templateName, {encoding: 'utf8'});
+  } else {
+    file = fs.readFileSync('templates/'+templateName, {encoding: 'utf8'});
+  }
+
   return Handlebars.compile(file);
 }
