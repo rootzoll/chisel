@@ -29,7 +29,7 @@ server.get('/generate', function (req, res) {
     if ((typeof req.query.template!="undefined") && (req.query.template!="undefined")) request.payload.template = req.query.template;
 
     // for code coupon printing
-    if (typeof req.query.codes != "undefined") {
+    if ((typeof req.query.codes != "undefined") && (req.query.codes!="undefined")) {
         var codes = req.query.codes.split(",");
         for (var i=0; i<codes.length; i++) {
             var code = codes[i];
@@ -38,7 +38,7 @@ server.get('/generate', function (req, res) {
     } else
 
     // for general PDF generation (item array per parameter)
-    if (typeof req.query.items != "undefined") {
+    if ((typeof req.query.items != "undefined") && (req.query.items!="undefined")) {
         request.payload.data.items = JSON.parse(req.query.items);
     }
 
