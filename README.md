@@ -15,15 +15,15 @@ node src/index.js
 
 ## GET Call to create PDF
 
-There are to modes to call the service with GET:
+There are two modes to call the service with HTTP GET when running:
 
-# List of Codes
+# 1. List of Codes
 
 Use parameter named 'codes' with a comma separated list of code strings as value.
 This will work with a template that has just one field named '{{code}}'.
 Use this mode to generate a big batch of code coupons etc.
 
-# Multiple Item Object Array
+# 2. Multiple Item Object Array
 
 For more detailed content replacement use a parameter called 'items'.
 As value give a JSON array containing objects.
