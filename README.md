@@ -1,8 +1,8 @@
-# Chisel - PDF Coupon Generator
+# Konfetti - PDF Coupon Generator
 
-api for generating PDF files with nodejs, handlebars and phantomjs from HTML template.
+Small service for generating PDF files with nodejs, handlebars and phantomjs from HTML template.
 
-helper for konfetti project: 
+Part of the Konfetti project: https://github.com/rootzoll/konfetti-app
 
 ## Requirements
 
