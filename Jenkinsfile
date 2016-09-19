@@ -32,9 +32,9 @@ node {
             dockerImg.push()
         }
 
-//        if (production.equals(branch)) {
-//            stage 'Deploy to Production'
-//            sh "docker-compose up -d --force-recreate"
-//        }
+        if (production.equals(branch)) {
+            stage 'Deploy to Production'
+            sh "docker-compose up -d --force-recreate"
+        }
     }
 }
