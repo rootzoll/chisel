@@ -33,8 +33,8 @@ node {
         }
 
         if (production.equals(branch)) {
-            stage 'Deploy to Production'
-            sh "docker-compose up -d --force-recreate"
+            stage "Deploy On Production"
+            build job: 'DeployKonfettiOnProduction', wait: false
         }
     }
 }
