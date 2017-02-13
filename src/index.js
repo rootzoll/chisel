@@ -25,6 +25,12 @@ server.get('/generate', function (req, res) {
         }
     };
 
+    var amount = "";
+    // for general PDF generation (item array per parameter)
+    if ((typeof req.query.amount != "undefined") && (req.query.amount!="undefined")) {
+        amount = req.query.amount;
+    }
+
     // if now template set - use default template
     if ((typeof req.query.template!="undefined") && (req.query.template!="undefined")) request.payload.template = req.query.template;
 
@@ -33,7 +39,7 @@ server.get('/generate', function (req, res) {
         var codes = req.query.codes.split(",");
         for (var i=0; i<codes.length; i++) {
             var code = codes[i];
-            request.payload.data.items.push({code:code});
+            request.payload.data.items.push({code:code,amount:amount});
         }
     } else
 
